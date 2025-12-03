@@ -1,5 +1,110 @@
-<html>
-  <body>
-    esto es una prueba2
-  </body>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Mini Dino Game</title>
+<style>
+    body {
+        background: #f5f5f5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        font-family: Arial;
+    }
+
+    #game {
+        width: 600px;
+        height: 200px;
+        background: white;
+        border: 2px solid #333;
+        position: relative;
+        overflow: hidden;
+    }
+
+    #dino {
+        width: 40px;
+        height: 40px;
+        background: black;
+        position: absolute;
+        bottom: 0;
+    }
+
+    #obstacle {
+        width: 30px;
+        height: 50px;
+        background: red;
+        position: absolute;
+        right: -50px;
+        bottom: 0;
+    }
+</style>
+</head>
+
+<body>
+<div id="game">
+    <div id="dino"></div>
+    <div id="obstacle"></div>
+</div>
+
+<script>
+    const dino = document.getElementById("dino");
+    const obstacle = document.getElementById("obstacle");
+
+    let isJumping = false;
+    let jumpHeight = 0;
+
+    // Hacer que el dino salte
+    function jump() {
+        if (isJumping) return;
+        isJumping = true;
+
+        let upInterval = setInterval(() => {
+            if (jumpHeight >= 100) { 
+                clearInterval(upInterval);
+
+                let downInterval = setInterval(() => {
+                    if (jumpHeight <= 0) {
+                        clearInterval(downInterval);
+                        isJumping = false;
+                    }
+                    jumpHeight -= 5;
+                    dino.style.bottom = jumpHeight + "px";
+                }, 15);
+            }
+            jumpHeight += 5;
+            dino.style.bottom = jumpHeight + "px";
+        }, 15);
+    }
+
+    document.addEventListener("keydown", jump);
+
+    // Movimiento del obstáculo
+    function moveObstacle() {
+        let position = 600;
+
+        let interval = setInterval(() => {
+            if (position < -40) {
+                position = 600; // reiniciar obstáculo
+            }
+
+            position -= 5;
+            obstacle.style.right = position + "px";
+
+            // Detectar colisión
+            if (
+                position > 500 - 40 && position < 500 + 30 && // rango horizontal
+                jumpHeight < 50 // dino no saltó suficiente
+            ) {
+                alert("💥 GAME OVER");
+                position = 600;
+            }
+        }, 20);
+    }
+
+    moveObstacle();
+</script>
+</body>
 </html>
+
